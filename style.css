@@ -1,3 +1,15 @@
-body {
-    background-color: #2e7d32;
+html, body {
+    background-color: #388e3c;
 }
+
+.brand-logo {
+    margin-left: 10px;
+}
+
+.introduction {
+    background-color: #ffcdd2;
+    padding: 20px 100px 10px 100px;
+    text-align: center;
+    font-family: Garamond;
+}
+
