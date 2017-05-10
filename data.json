@@ -8,5 +8,10 @@
       "type": "Post",
       "url": "http://shop.oreilly.com/product/9780596809492.do"
     }
-  ]
+  ],
+  
+  "styling": {
+    "navbarColor": "red lighten-2",
+    "backgroundColor": "blue-grey"
+  }
 }
