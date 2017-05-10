@@ -13,5 +13,13 @@
   "styling": {
     "navbarColor": "red lighten-2",
     "backgroundColor": "blue-grey"
+  },
+  
+  "meta": {
+    "title": "My blog",
+    "about": {
+      "avatar": "https://img.buzzfeed.com/buzzfeed-static/static/2014-04/enhanced/webdr05/14/12/enhanced-buzz-20805-1397492083-8.jpg",
+      "blurb": "Some *cool* text"
+    }
   }
 }
