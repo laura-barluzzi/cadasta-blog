@@ -81,3 +81,7 @@ nav .active .icon {
 nav input[type="search"] {
     height: 64px;
 }
+
+nav .brand-logo.center {
+    font-family: Lobster;
+}
