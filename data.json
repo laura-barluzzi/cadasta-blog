@@ -19,7 +19,7 @@
     "title": "my coding blog",
     "about": {
       "avatar": "",
-      "blurb": "*Hello World!* Welcome to my coding blog!\n\nI'm a fuzzy koala coder and here I write about my experience as an Outreachy intern at Cadasta.\n\nAfter studying politics and international developement, I decided to self-learn programming and I'm excited to share challenges, joys and lessons learnt along the way. My posts highlight the reality of studying and working on open source, remote and tech-for-good projects."
+      "blurb": "##### Hello World! Welcome to my coding blog!\nI'm a fuzzy   [***koala coder***](http://koalacoder.com) and here I write about my experience as an [Outreachy](https://www.gnome.org/outreachy/) intern at [Cadasta](http://cadasta.org).\nAfter studying politics and international developement, I decided to self-learn programming and I'm excited to share *challenges*, *joys* and *lessons learnt* along the way.\nMy posts highlight the reality of studying and working on **open source, remote and tech-for-good projects.**"
     }
   }
 }
