@@ -19,10 +19,7 @@
     "title": "my coding blog",
     "about": {
       "avatar": "https://avatars0.githubusercontent.com/u/16849118?v=3&u=7ddc13a3f746b0fcd633cd0a2367815dc412718a&s=400",
-      "blurb": "*Hello World!* Welcome to my coding blog! I'm a fuzzy koala coder and here I write about my experience
-                as an Outreachy intern at Cadasta. After studying politics and international developement, I decided to
-                self-learn programming and I'm excited to share challenges, joys and lessons learnt along the way. 
-                My posts highlight the reality of studying and working on open source, remote and tech-for-good projects."
+      "blurb": "*Hello World!*"
     }
   }
 }
