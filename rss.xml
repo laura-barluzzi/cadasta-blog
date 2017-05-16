@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<rss version="2.0">
+<channel>
+<title>My coding blog</title>
+<link>http://koalacoder.com/cadasta-blog</link>
+<description>A blog about my coding experience as an Outeachy intern at Cadasta.</description>
+<managingEditor>laura@koalacoder.com (Laura Barluzzi)</managingEditor>
+<webMaster>laura@koalacoder.com (Laura Barluzzi)</webMaster>
+<ttl>40</ttl>
+
+<item>
+<title>My self-learning path to sofware development</title>
+<pubDate>Fri, 12 May 2017 00:00:00 -0000</pubDate>
+<description>I started my self-learning process in July 2016. During the first five months (July-Nov), I used to follow the great MIT course [“Introduction to Comp...</description>
+<category>Self-learning, Outreachy</category>
+<link>http://koalacoder.com/cadasta-blog/#post_12may17msptsd</link>
+<guid>http://koalacoder.com/cadasta-blog/#post_12may17msptsd</guid>
+</item>
+
+<item>
+<title>Changing career: when I decided to become a coder</title>
+<pubDate>Tue, 16 May 2017 00:00:00 -0000</pubDate>
+<description>I grew up in a small Alpine Italian city called Belluno. Since I was a teenager, I started volunteering at a local fairtrade shop and I became ‘famous...</description>
+<category>Career</category>
+<link>http://koalacoder.com/cadasta-blog/#post_16may17ccwidtbac</link>
+<guid>http://koalacoder.com/cadasta-blog/#post_16may17ccwidtbac</guid>
+</item>
+
+</channel>
+</rss>
