@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<rss version="2.0">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
 <title>My coding blog</title>
 <link>http://koalacoder.com/cadasta-blog</link>
@@ -7,3 +7,4 @@
 <managingEditor>laura@koalacoder.com (Laura Barluzzi)</managingEditor>
 <webMaster>laura@koalacoder.com (Laura Barluzzi)</webMaster>
 <ttl>40</ttl>
+<atom:link href="http://koalacoder.com/cadasta-blog/rss.xml" rel="self" type="application/rss+xml" />
