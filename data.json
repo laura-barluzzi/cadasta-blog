@@ -15,14 +15,6 @@
       "topics": ["Career"],
       "type": "Post",
       "url": ""
-    },
-    {
-     "date": "2017-05-16",
-     "summary": "Test if RSS feed works",
-     "title": "Test",
-     "topics": ["Testing"],
-     "type": "Post",
-     "url": ""
     }
   ],
   
