@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<rss version="2.0">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
 <channel>
 <title>My coding blog</title>
 <link>http://koalacoder.com/cadasta-blog</link>
@@ -7,6 +7,7 @@
 <managingEditor>laura@koalacoder.com (Laura Barluzzi)</managingEditor>
 <webMaster>laura@koalacoder.com (Laura Barluzzi)</webMaster>
 <ttl>40</ttl>
+<atom:link href="http://koalacoder.com/cadasta-blog/rss.xml" rel="self" type="application/rss+xml" />
 
 <item>
 <title>My self-learning path to sofware development</title>
@@ -24,15 +25,6 @@
 <category>Career</category>
 <link>http://koalacoder.com/cadasta-blog/#post_16may17ccem</link>
 <guid>http://koalacoder.com/cadasta-blog/#post_16may17ccem</guid>
-</item>
-
-<item>
-<title>Test</title>
-<pubDate>Tue, 16 May 2017 00:00:00 -0000</pubDate>
-<description>Test if RSS feed works...</description>
-<category>Testing</category>
-<link>http://koalacoder.com/cadasta-blog/#post_16may17t</link>
-<guid>http://koalacoder.com/cadasta-blog/#post_16may17t</guid>
 </item>
 
 </channel>
