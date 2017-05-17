@@ -3,10 +3,14 @@ import codecs
 import email.utils
 import json
 import markdown
+import re
 
 
 def parse_url_title(title):
-    parsed_title = ''.join(word[0] for word in title.lower().split(' '))
+    alpha = re.compile("[^a-z ]")
+    space = re.compile("\s\s+")
+    alpha_title = space.sub(' ', (alpha.sub("", title.lower())))
+    parsed_title = ''.join(word[0] for word in alpha_title.split(' '))
     return parsed_title
 
 
