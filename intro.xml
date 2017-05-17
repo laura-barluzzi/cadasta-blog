@@ -7,4 +7,4 @@
 <managingEditor>laura@koalacoder.com (Laura Barluzzi)</managingEditor>
 <webMaster>laura@koalacoder.com (Laura Barluzzi)</webMaster>
 <ttl>40</ttl>
-<atom:link href="./rss.xml" rel="self" type="application/rss+xml" />
+<atom:link href="https://raw.githubusercontent.com/laura-barluzzi/cadasta-blog/master/rss.xml" rel="self" type="application/rss+xml" />

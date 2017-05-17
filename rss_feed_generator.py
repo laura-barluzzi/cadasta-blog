@@ -2,6 +2,7 @@ from datetime import datetime
 import codecs
 import email.utils
 import json
+import markdown
 
 
 def parse_url_title(title):
@@ -44,8 +45,10 @@ def parse_to_rfc_2822_format(date):
     return date
 
 
-def convert_markdown_to_html(text):
-    return text
+def convert_markdown_to_html(post_text):
+    html_text = markdown.markdown(post_text)
+    html = "<![CDATA[{post}]]>".format(post=html_text)
+    return html
 
 
 def generate_xml_body():
@@ -62,6 +65,7 @@ def generate_xml_body():
         xml_item = [title, date, description, topics, url_feed]
         xml_body += apply_xml_syntax(xml_item)
     return xml_body
+
 
 if __name__ == '__main__':
 
