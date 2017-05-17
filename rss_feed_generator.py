@@ -1,62 +1,68 @@
-import json
 from datetime import datetime
 import email.utils
-import calendar
+import json
 
-def parseTitle(title):
-    parsed_title = ""
-    for word in title.lower().split(" "):
-        parsed_title += word[0]
-    return parsed_title      
-    
-def parseDate(date):
+
+def parse_url_title(title):
+    parsed_title = ''.join(word[0] for word in title.lower().split(' '))
+    return parsed_title
+
+
+def parse_url_date(date):
     """date format is YYYY-MM-DD"""
-    day = date[8:10]
-    year = date[2:4]
-    month = calendar.month_abbr[int(date[5:7])].lower()
-    return day + month + year
-    
-def generateUrl(date, title):
-    host_path = "http://koalacoder.com/cadasta-blog/#post_"
-    parsed_date = parseDate(date)
-    parsed_title = parseTitle(title)
-    url_feed = host_path + parsed_date + parsed_title
-    return url_feed
-    
-def applyXmlSyntax(item):
-    """Item is a list. Each list entry is a xml item tag. The order of tags in list is: [title, date, description, topics, url_feed]"""
-    
-    return ("\n<item>\n" +
-                "<title>%s</title>\n" % item[0] +
-                "<pubDate>%s</pubDate>\n" % item[1] +
-                "<description>%s</description>\n" % item[2]+
-                "<category>%s</category>\n" % item[3] +
-                "<link>%s</link>\n" % item[4] +
-                "<guid>%s</guid>\n" % item[4] +
-            "</item>\n")             
+    date_obj = datetime.strptime(date, "%Y-%m-%d")
+    parsed_date = date_obj.strftime("%d%b%y").lower()
+    return parsed_date
 
-def generateXmlBody():
-    blog_content = json.load(open("./data.json"))
-    feeds_info = blog_content["content"]
+
+def generate_url(date, title):
+    url_date = parse_url_date(date)
+    url_title = parse_url_title(title)
+    url_feed = ("http://koalacoder.com/cadasta-blog"
+                "/#post_{date}{title}".format(date=url_date, title=url_title))
+    return url_feed
+
+
+def apply_xml_syntax(item):
+    """Item is a list. Each list entry is a xml item tag. The order of tags in list is: [title, date, description, topics, url_feed]"""
+
+    return ("\n<item>\n"
+            "<title>{title}</title>\n"
+            "<pubDate>{date}</pubDate>\n"
+            "<description>{description}</description>\n"
+            "<category>{topics}</category>\n"
+            "<link>{link}</link>\n"
+            "<guid>{guid}</guid>\n"
+            "</item>\n".format(title=item[0], date=item[1], description=item[2],
+                               topics=item[3], link=item[4], guid=item[4]))
+
+
+def parse_to_rfc_2822_format(date):
+    dt = datetime.strptime(date, "%Y-%m-%d")
+    date = email.utils.format_datetime(dt)  # RFC 2822 datetime
+    return date
+
+
+def generate_xml_body():
+    with open('./data.json') as file_object:
+        blog_content = json.load(file_object)
+        feeds_info = blog_content["content"]
     xml_body = ""
     for feed in feeds_info:
-        dt = datetime.strptime(feed["date"], "%Y-%m-%d")
-        date = email.utils.format_datetime(dt) # RFC 2822 datetime
+        date = parse_to_rfc_2822_format(feed["date"])
         title = feed["title"]
-        description = feed["summary"][0:150]+ "..."
+        description = feed["summary"][:150] + "..."
         topics = ', '.join(feed["topics"])
-        url_feed = generateUrl(feed["date"], title)
+        url_feed = generate_url(feed["date"], title)
         xml_item = [title, date, description, topics, url_feed]
-        xml_body += applyXmlSyntax(xml_item)
+        xml_body += apply_xml_syntax(xml_item)
     return xml_body
 
-xml = open("intro.xml", "r")
-if xml.mode == "r":
-    intro = xml.read().strip();
-xml.close()
+if __name__ == '__main__':
 
-# write new xml file    
-xmlFile = open("rss.xml", "w+")
-body = generateXmlBody()
-xmlFile.write("%s\n%s\n</channel>\n</rss>" % (intro, body))
-xmlFile.close()
+    with open("intro.xml") as intro_xml:
+        intro = intro_xml.read().strip()
+
+    with open("rss.xml", "w") as rss_xml:
+        body = generate_xml_body()
+        rss_xml.write("%s\n%s\n</channel>\n</rss>" % (intro, body))
