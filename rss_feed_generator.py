@@ -51,7 +51,7 @@ def generate_xml_body():
     for feed in feeds_info:
         date = parse_to_rfc_2822_format(feed["date"])
         title = feed["title"]
-        description = feed["summary"][:150] + "..."
+        description = feed["summary"]
         topics = ', '.join(feed["topics"])
         url_feed = generate_url(feed["date"], title)
         xml_item = [title, date, description, topics, url_feed]
