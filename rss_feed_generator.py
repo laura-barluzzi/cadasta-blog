@@ -1,4 +1,5 @@
 from datetime import datetime
+import codecs
 import email.utils
 import json
 
@@ -43,15 +44,19 @@ def parse_to_rfc_2822_format(date):
     return date
 
 
+def convert_markdown_to_html(text):
+    return text
+
+
 def generate_xml_body():
-    with open('./data.json') as file_object:
+    with codecs.open("./data.json", "r", "utf-8") as file_object:
         blog_content = json.load(file_object)
         feeds_info = blog_content["content"]
     xml_body = ""
     for feed in feeds_info:
         date = parse_to_rfc_2822_format(feed["date"])
         title = feed["title"]
-        description = feed["summary"]
+        description = convert_markdown_to_html(feed["summary"])
         topics = ', '.join(feed["topics"])
         url_feed = generate_url(feed["date"], title)
         xml_item = [title, date, description, topics, url_feed]
@@ -60,9 +65,9 @@ def generate_xml_body():
 
 if __name__ == '__main__':
 
-    with open("intro.xml") as intro_xml:
+    with codecs.open("intro.xml", "r", "utf-8") as intro_xml:
         intro = intro_xml.read().strip()
 
-    with open("rss.xml", "w") as rss_xml:
+    with codecs.open("rss.xml", "w", "utf-8") as rss_xml:
         body = generate_xml_body()
         rss_xml.write("%s\n%s\n</channel>\n</rss>" % (intro, body))
