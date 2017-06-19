@@ -46,7 +46,7 @@ $ pip install -r requirements.txt
 ```
 
 # How to add a post and update the rss.xml
-Add a new post inside the `data.json` file. A new post is simply a new list item in `data.json["content"]`. Make sure to save it after you are done. The text in `data.json` applies markdown syntax.
+Add a new post inside the `data.json` file. A new post is simply a new list item in `data.json["content"]`. Make sure to save it after you are done. The text in `data.json` applies the [common markdown syntax](https://guides.github.com/features/mastering-markdown/).
 
 In order to update the `rss.xml` file with the new changes from `data.json`, in the terminal you need to run:
 ```
