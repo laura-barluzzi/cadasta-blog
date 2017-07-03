@@ -38,7 +38,7 @@ As a consequnce, for 9-months I have been self-learning programming, and today I
 <pubDate>Fri, 16 Jun 2017 00:00:00 -0000</pubDate>
 <description><![CDATA[<p>My first weeks as an Outreachy intern at <a href="https://github.com/Cadasta">Cadasta</a> have been incredible. As agreed with my mentors Chandra and Kate, my starting task was to enhance the user experience by adding the <strong>language option in the user account</strong>. The result of this work in available on <a href="https://github.com/Cadasta/cadasta-platform/pull/1569">this PR</a> on Github. As you can see, Cadasta uses Python with Django.
 To achieve the goal, on my first day I made a detailed task-list, which you can see on the PR description section. Fortunately, thanks to the fact I have already contributed during the application process, the setting up of the environment and the Git Flow were already known to me. This meant I could quickly start with the tasks. I’m going to write the next paragraphs highlighting <strong>challenges</strong> and <strong>moments of pride</strong> for each chunk of work:</p>
-<p>###### <strong>1. Handling a migration</strong></p>
+<h6><strong>1. Handling a migration</strong></h6>
 <p><strong>Challenges:</strong>
 It was the first time I worked with migrations and I didn’t have a clear idea of what it required to do. Following some online tutorials, I just learned how to run commands such as <code>python manage.py makemigrations</code> and <code>python manage.py migrate</code>. At first I believed this was <em>all</em>. Though I encountered a problem and an unclear error appeared -- I was unable to figure it out on my own. After asking for help, I was told the error was linked probably to the version of Python (2.X instead of 3.X). After fixing this problem, later on I also discovered I had to add, commit and push a migration file to Git Hub in order to add the model change to the PR -- another information I didn’t know and I needed help from someone else in order to figure out.</p>
 <p><strong>Moments of pride:</strong>
@@ -66,6 +66,83 @@ Firstly, I used my experience to improve the existing documentation: I wrote a m
 <category>Outreachy, Cadasta, Work</category>
 <link>http://koalacoder.com/cadasta-blog/#post_16jun17mfwaaiac</link>
 <guid>http://koalacoder.com/cadasta-blog/#post_16jun17mfwaaiac</guid>
+</item>
+
+<item>
+<title>A Django custom middleware story</title>
+<pubDate>Fri, 30 Jun 2017 00:00:00 -0000</pubDate>
+<description><![CDATA[<p>During my first 2 weeks I added the option for Cadasta platform’s users to select a preferred language to be applied in the platform once the user is logged in. I had to:</p>
+<p><strong>1. Add a user.language field into the User model in Django</strong></p>
+<p><strong>2. Add the dropdown field to the form displayed into the template to edit the user profile</strong></p>
+<p>**3. Activate the translation of user.language whenever the user logs in and edits the profile.</p>
+<p>While the first two steps were extremely easy to be done thanks to the <a href="https://docs.djangoproject.com/en/1.11/topics/db/models/">Django models</a> and <a href="https://docs.djangoproject.com/en/1.11/topics/forms/modelforms/">form models</a>, the third task was surprisingly not available.</p>
+<p>I ended up conducting a lot of research on how to activate the translation with the language stored in the user model in Django. Keeping in mind that all the in-text formatting for translation was already covered as explained <a href="https://docs.djangoproject.com/en/1.11/topics/i18n/translation/">here</a>, I could not find anything covering my case scenario to <em>activate</em> the translation. The only option I found that was somehow relevant was the case of <a href="https://docs.djangoproject.com/en/1.11/topics/i18n/translation/#set-language-redirect-view">set_language()</a>: this does exactly what I wanted but it ended up working only from a template form in the frontend. I was looking for a backend solution instead.</p>
+<p>At one point I realized that Django didn’t provide what I was looking for. At the same time, I also noticed that many people on the internet were asking my same exact question on platforms such as stackoverflow. It was at that moment that I realized I had to patch different informations together to create my own <em>custom</em> solution. </p>
+<p><strong>How I ended up thinking about a custom middleware?</strong></p>
+<p>I wanted to write the code to activate the language in one single place, to reduce redundancy. In order to do so, the best option would have been to activate the translation <strong>whenever there was a request</strong>. This brought me to think about adding a middleware. But what is a middleware? According to <a href="https://en.wikipedia.org/wiki/Middleware">Wikipedia</a>:</p>
+<blockquote>
+<p>Middleware is computer software that provides services to software applications beyond those available from the operating system. It can be described as "software glue."</p>
+</blockquote>
+<p>Using Vitor Freitas words:</p>
+<blockquote>
+<p>a Middleware is a regular Python class that hooks into Django’s request/response lifecycle.</p>
+</blockquote>
+<p>You can visualize a middleware like this:</p>
+<p>```User → request → middleware → Cadasta Django application</p>
+<p>User ← response ← middleware ← Cadasta Django application```</p>
+<p>Since there wasn’t already one, I had to built a <em>custom middlware</em>. Django provides some instructions on how to create <a href="https://docs.djangoproject.com/en/1.11/topics/http/middleware/">Django custom middlewares</a>. However, these information were highly misleading since in their main example they don’t clearly mention that if you don’t return a <strong>response</strong> you should return <strong>None</strong>. Further, they didn’t clearly advise on where to locate the middleware in the code.</p>
+<p>With the help of some examples such as this answer on  <a href="https://stackoverflow.com/questions/18322262/how-to-setup-custom-middleware-in-django">StackOverflow</a> and this <a href="https://simpleisbetterthancomplex.com/tutorial/2016/07/18/how-to-create-a-custom-django-middleware.html">How to Create a Custom Django Middleware</a> tutorial, I combined information and I sucessfully built my custom middleware.</p>
+<p><strong>The path of my middleware</strong></p>
+<p>Since my custom middleware only handled the user model to fetch the user.language value, I decided to locate my middleware class inside a <strong>middleware.py</strong> in the main repository of the <strong>accounts</strong> application, which is the Cadasta application handling the user models.</p>
+<p>Further, I had to add the path of my <strong>middlware.py</strong> file into the MIDDLEWARE_CLASSES list in <strong>settings/default.py</strong>: </p>
+<p>```MIDDLEWARE_CLASSES = (</p>
+<pre><code>'corsheaders.middleware.CorsMiddleware',
+
+'django.contrib.sessions.middleware.SessionMiddleware',
+
+# …
+
+'accounts.middleware.UserLanguageMiddleware',
+</code></pre>
+<p>) ```</p>
+<p><strong>The UserLanguageMiddleware class</strong></p>
+<p>```from django.utils import translation</p>
+<p>class UserLanguageMiddleware(object):</p>
+<pre><code>def process_request(self, request):
+
+    if not request.user.is_authenticated:
+
+        return None
+
+
+
+     user_language = request.user.language
+
+    current_language = translation.get_language()
+
+    if user_language == current_language:
+
+        return None
+
+
+
+     translation.activate(user_language)
+
+    request.session[translation.LANGUAGE_SESSION_KEY] = user_language
+
+    return None
+</code></pre>
+<p>```</p>
+<p>This class is going to be <strong>called at any request</strong>.  It processes the request by accessing the user.language value and by activating the translation of the entire platform whenever the user is authenticated. Further, this code sets the LANGUAGE_SESSION_KEY to the same value as well.</p>
+<p><strong>Conclusion</strong></p>
+<p>This solution of the middleware worked very smoothly and required the addition of just 1 file (with respective test available <a href="https://github.com/Cadasta/cadasta-platform/blob/9d03c296cde9148e98f8552aa5ac003bf81df318/cadasta/accounts/tests/test_middleware.py">here</a>). On this day, this code has been merged into the <a href="https://github.com/Cadasta/cadasta-platform/blob/9d03c296cde9148e98f8552aa5ac003bf81df318/cadasta/accounts/middleware.py">master branch</a> of cadasta-platform and I am considering to enable everybody to use my solution by creating an independent package soon.</p>
+<p><a href="https://github.com/Cadasta/cadasta-platform">Cadasta git hub repository</a></p>
+<p><a href="https://github.com/Cadasta/cadasta-platform/pull/1569">My first PR</a></p>
+<p><a href="http://koalacoder.com/">My koalacoder website</a></p>
+<p><a href="http://koalacoder.com/cadasta-blog/">My blog</a></p>]]></description>
+<category>Outreachy, Cadasta, Work</category>
+<link>http://koalacoder.com/cadasta-blog/#post_30jun17adcms</link>
+<guid>http://koalacoder.com/cadasta-blog/#post_30jun17adcms</guid>
 </item>
 
 </channel>
