@@ -74,7 +74,7 @@ Firstly, I used my experience to improve the existing documentation: I wrote a m
 <description><![CDATA[<p>During my first 2 weeks I added the option for Cadasta platform’s users to select a preferred language to be applied in the platform once the user is logged in. I had to:</p>
 <p><strong>1. Add a user.language field into the User model in Django</strong></p>
 <p><strong>2. Add the dropdown field to the form displayed into the template to edit the user profile</strong></p>
-<p>**3. Activate the translation of user.language whenever the user logs in and edits the profile.</p>
+<p><strong>3. Activate the translation of user.language whenever the user logs in and edits the profile.</strong></p>
 <p>While the first two steps were extremely easy to be done thanks to the <a href="https://docs.djangoproject.com/en/1.11/topics/db/models/">Django models</a> and <a href="https://docs.djangoproject.com/en/1.11/topics/forms/modelforms/">form models</a>, the third task was surprisingly not available.</p>
 <p>I ended up conducting a lot of research on how to activate the translation with the language stored in the user model in Django. Keeping in mind that all the in-text formatting for translation was already covered as explained <a href="https://docs.djangoproject.com/en/1.11/topics/i18n/translation/">here</a>, I could not find anything covering my case scenario to <em>activate</em> the translation. The only option I found that was somehow relevant was the case of <a href="https://docs.djangoproject.com/en/1.11/topics/i18n/translation/#set-language-redirect-view">set_language()</a>: this does exactly what I wanted but it ended up working only from a template form in the frontend. I was looking for a backend solution instead.</p>
 <p>At one point I realized that Django didn’t provide what I was looking for. At the same time, I also noticed that many people on the internet were asking my same exact question on platforms such as stackoverflow. It was at that moment that I realized I had to patch different informations together to create my own <em>custom</em> solution. </p>
@@ -88,48 +88,33 @@ Firstly, I used my experience to improve the existing documentation: I wrote a m
 <p>a Middleware is a regular Python class that hooks into Django’s request/response lifecycle.</p>
 </blockquote>
 <p>You can visualize a middleware like this:</p>
-<p>```User → request → middleware → Cadasta Django application</p>
-<p>User ← response ← middleware ← Cadasta Django application```</p>
+<p><code>User → request → middleware → Cadasta Django application
+User ← response ← middleware ← Cadasta Django application</code></p>
 <p>Since there wasn’t already one, I had to built a <em>custom middlware</em>. Django provides some instructions on how to create <a href="https://docs.djangoproject.com/en/1.11/topics/http/middleware/">Django custom middlewares</a>. However, these information were highly misleading since in their main example they don’t clearly mention that if you don’t return a <strong>response</strong> you should return <strong>None</strong>. Further, they didn’t clearly advise on where to locate the middleware in the code.</p>
 <p>With the help of some examples such as this answer on  <a href="https://stackoverflow.com/questions/18322262/how-to-setup-custom-middleware-in-django">StackOverflow</a> and this <a href="https://simpleisbetterthancomplex.com/tutorial/2016/07/18/how-to-create-a-custom-django-middleware.html">How to Create a Custom Django Middleware</a> tutorial, I combined information and I sucessfully built my custom middleware.</p>
 <p><strong>The path of my middleware</strong></p>
 <p>Since my custom middleware only handled the user model to fetch the user.language value, I decided to locate my middleware class inside a <strong>middleware.py</strong> in the main repository of the <strong>accounts</strong> application, which is the Cadasta application handling the user models.</p>
 <p>Further, I had to add the path of my <strong>middlware.py</strong> file into the MIDDLEWARE_CLASSES list in <strong>settings/default.py</strong>: </p>
-<p>```MIDDLEWARE_CLASSES = (</p>
-<pre><code>'corsheaders.middleware.CorsMiddleware',
-
-'django.contrib.sessions.middleware.SessionMiddleware',
-
-# …
-
-'accounts.middleware.UserLanguageMiddleware',
-</code></pre>
-<p>) ```</p>
-<p><strong>The UserLanguageMiddleware class</strong></p>
-<p>```from django.utils import translation</p>
-<p>class UserLanguageMiddleware(object):</p>
-<pre><code>def process_request(self, request):
-
-    if not request.user.is_authenticated:
-
-        return None
-
-
-
-     user_language = request.user.language
-
+<p><code>MIDDLEWARE_CLASSES = (
+    'corsheaders.middleware.CorsMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    # …
+    'accounts.middleware.UserLanguageMiddleware',
+)</code></p>
+<p><strong>The UserLanguageMiddleware class:</strong></p>
+<p>```
+from django.utils import translation</p>
+<p>class UserLanguageMiddleware(object):
+    def process_request(self, request):
+        if not request.user.is_authenticated:
+            return None</p>
+<pre><code>    user_language = request.user.language
     current_language = translation.get_language()
-
     if user_language == current_language:
-
         return None
 
-
-
-     translation.activate(user_language)
-
+    translation.activate(user_language)
     request.session[translation.LANGUAGE_SESSION_KEY] = user_language
-
     return None
 </code></pre>
 <p>```</p>
