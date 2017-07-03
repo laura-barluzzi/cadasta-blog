@@ -1,0 +1,62 @@
+<html>
+ <head>
+   <meta charset="utf-8" />
+
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.5/marked.min.js"></script>
+   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css">
+
+   <style>
+     #serialized {
+       margin-top: 1em;
+       font-size: smaller;
+       white-space: pre-wrap;
+     }
+ #serialized:before {
+       content: "JSON: ";
+     }
+
+ #editor {
+       background: #eee;
+       padding: 2em;
+     }
+
+ #preview {
+       padding: 2em;
+     }
+   </style>
+
+<title>Editor</title>
+ </head>
+ <body>
+   <div class="container">
+     <div class="row">
+       <div class="col-sm-6" id="editor" contenteditable="true">write post here</div>
+       <div class="col-sm-6" id="preview" />
+     </div>
+     <div class="row">
+       <pre class="col-sm-12" id="serialized" />
+     </div>
+   </div>
+   <script>
+     var editor = document.getElementById("editor");
+     var preview = document.getElementById("preview");
+     var serialized = document.getElementById("serialized");
+
+     editor.addEventListener("input", function() {
+       var markdown = editor.innerHTML
+         .replace(/<br>/g, "\n")
+         .replace(/&nbsp;/g, " ");
+       preview.innerHTML = marked(markdown);
+       serialized.innerHTML = JSON.stringify(markdown)
+         .replace(/\\n/g, "\\n")
+         .replace(/\\'/g, "\\'")
+         .replace(/\\"/g, '\\"')
+         .replace(/\\&/g, "\\&")
+         .replace(/\\r/g, "\\r")
+         .replace(/\\t/g, "\\t")
+         .replace(/\\b/g, "\\b")
+         .replace(/\\f/g, "\\f");
+     }, false);
+   </script>
+ </body>
+</html>
