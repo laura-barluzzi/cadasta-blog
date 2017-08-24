@@ -216,5 +216,50 @@ $('#image-editor').cropit({
 <guid>http://koalacoder.com/cadasta-blog/#post_14jul17imwc</guid>
 </item>
 
+<item>
+<title>Creating user dashboard and querying database with Django</title>
+<pubDate>Tue, 15 Aug 2017 00:00:00 -0000</pubDate>
+<description><![CDATA[<p>After about 1 month, I finally managed to make a <a href="https://github.com/Cadasta/cadasta-platform/pull/1721">PR</a> for my main project within the Cadasta Foundation Platform: <strong>the creation of a user dashboard.</strong>This task was not technically difficult, but it included many skills and a broad knowledge of Django's framework. Most important, I learnt how to query the database with Django and the importance of planning and design. But let's start from the beginning.</p>
+<p><strong>1. Setting up the basics:</strong>
+Since I was dealing with the user, this work was confined in the Cadasta app called <code>accounts</code>. In order to start, I needed to create and combine 3 things:
+- a new url path in <code>accounts/url.py</code>. See <a href="https://github.com/Cadasta/cadasta-platform/blob/07d76c66c6f5ab3748e995e5c818ff18d914e3f8/cadasta/accounts/urls/default.py#L17-L19">here</a>.
+- a new view class in <code>accounts/views/default.py</code>. See <a href="https://github.com/Cadasta/cadasta-platform/blob/07d76c66c6f5ab3748e995e5c818ff18d914e3f8/cadasta/accounts/views/default.py#L93-L134">here</a>.
+- a new template <code>templates/accounts/user_dashboard.html</code>. See <a href="https://github.com/Cadasta/cadasta-platform/blob/07d76c66c6f5ab3748e995e5c818ff18d914e3f8/cadasta/templates/accounts/user_dashboard.html">here</a>.</p>
+<p><strong>2. Structuring the HTML file</strong>In order to be able later on to view information, I first focused on aptly structuring the template. This task was shared with my mentor Chandra, an experienced Front End Developer. Together, we combined existing <code>HTML</code> and <code>CSS</code> snippets of code from the Project Dashboard and Organization Dashboard (which are both currently on production).
+The main challenge of this phase, was <em>thinking about the content</em>. I realized how much time should be invested in planning and designing accordingly. After a long discussion on trade-offs, we came to the conclusion to focus on one type of information: <strong>the user's lists of organizations and projects.</strong></p>
+<p><strong>3. Querying database to retrieve the user's list of organizations and projects</strong></p>
+<p>Before sharing what I did and learnt, I want to share 2 challenges I faced while learning and doing this:</p>
+<p><strong><em>(1)</em></strong> In Cadasta, a user may be a member of an organization (as <code>Admin</code> or <code>Member</code>) and an organization has projects. Specifically, an organization Member must be assigned one of the following <strong><em>roles</em></strong> for each project in the organization: <code>Public User</code>, <code>Project User</code>, <code>Data Collector</code>, <code>Project Manager</code>. Therefore, I had to constantly bear in mind the <strong><em>different type of permissions</em></strong> in viewing/accessing information while querying and displaying information.</p>
+<p><strong><em>(2)</em></strong> I find Django's <strong><em>querying very difficult to guess.</em></strong> I could not rely on logic and I had to copy-and-paste the syntax to the point that I was <strong><em>highly dependent on the documentation</em></strong> and/or Stackoverflow. I guess this may have been caused by the fact it was my first time, but it was harder to guess comparing to previous experiences.However, I successfully managed to query the database.  I mention 2 things I did that were key for my learning and accomplishment: </p>
+<p><strong>I built a customized data-structure for my purpose:</strong>In order to properly display each organization and the projects of each organization, I needed to pass one variable to the context that enabled me to do a nested loop. The <strong>data structure I built in the view class</strong> is the following:
+ <code>context['user_orgs_and_projects'] = [
+        (org1, org1_role, [(proj1, proj1_role), (proj2, proj2_role)]),
+        (org2, org2_role, [(proj3, proj3_role), (proj4, proj4_role)]),
+        (org3, org3_role, []),
+]</code>
+In the template, I can simply access all the information by doing:
+ <code>{% for org, org_role, projects in user_orgs_and_projects %}
+    # display info about org
+    {% for proj, proj_role in projects %}
+        # access each project info within this org
+    {% endfor %}
+{% endfor %}</code>
+This is not exciting information, I know. However, I realized <strong><em>the importance of thinking about the data you need</em></strong>. If I didn't have a clear defined plan on how to display the data (and therefore, how to structure the data), querying the database and passing info to the template would have been an headache.</p>
+<p><strong>I learnt about the <code>Q</code> object to query with <code>or</code> statements:</strong>
+The following query takes values matching at least one of these 2 conditions:
+ ```
+from django.db.models import Q</p>
+<h1>...</h1>
+<p>org.projects.filter(
+    Q(archived=True) | Q(organization__archived=True))
+<code>``
+With the standard querying, all arguments passed are a condition of a default</code>and` statement, so without the Q object the example above would take only values matching <em>both</em> conditions simultaneously.</p>
+<h5><strong>Conclusion</strong></h5>
+<p>Thinking a lot, planning well, and reading relevant threads were clearly important factors leading to the closure of this task. They were also the reason why I wrote this post a bit later.</p>]]></description>
+<category>Outreachy, Cadasta, Work</category>
+<link>http://koalacoder.com/cadasta-blog/#post_15aug17cudaqdwd</link>
+<guid>http://koalacoder.com/cadasta-blog/#post_15aug17cudaqdwd</guid>
+</item>
+
 </channel>
 </rss>
