@@ -1,7 +1,7 @@
 # cadasta-blog
 This is a simple blog where I share my first job experience as a software developer [Outreachy](https://www.gnome.org/outreachy/) intern at [Cadasta](http://cadasta.org).
 
-The frontend for the blog is hosted on [gh-pages](http://c-w.github.io/blog/). It's built using VueJS and MaterializeCSS and pulls data from this repository.
+The frontend for the blog is hosted on [gh-pages](http://koalacoder.com/cadasta-blog/). It's built using VueJS and MaterializeCSS and pulls data from this repository.
 
 # Data Scheme
 
